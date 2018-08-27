@@ -13,7 +13,7 @@ const allActions = [setAuthenticated].map(getReturnOfExpression);
 export type AuthAction = typeof allActions[number];
 
 export function authenticate(token: string) {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     await Auth.validateToken(token);
     Auth.setAuthToken(token);
     return dispatch(setAuthenticated(true));
@@ -21,7 +21,7 @@ export function authenticate(token: string) {
 }
 
 export function logout() {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     Auth.unsetAuthToken();
     return dispatch(setAuthenticated(false));
   };

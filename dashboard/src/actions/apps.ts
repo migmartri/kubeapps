@@ -46,7 +46,7 @@ const allActions = [
 export type AppsAction = typeof allActions[number];
 
 export function getApp(releaseName: string, namespace: string) {
-  return async (dispatch: Dispatch<IStoreState>): Promise<void> => {
+  return async (dispatch: Dispatch): Promise<void> => {
     dispatch(requestApps());
     try {
       const app = await App.getRelease(namespace, releaseName);
@@ -58,7 +58,7 @@ export function getApp(releaseName: string, namespace: string) {
 }
 
 export function deleteApp(releaseName: string, namespace: string) {
-  return async (dispatch: Dispatch<IStoreState>): Promise<boolean> => {
+  return async (dispatch: Dispatch): Promise<boolean> => {
     try {
       await App.delete(releaseName, namespace);
       return true;
@@ -70,7 +70,7 @@ export function deleteApp(releaseName: string, namespace: string) {
 }
 
 export function fetchApps(ns?: string) {
-  return async (dispatch: Dispatch<IStoreState>): Promise<void> => {
+  return async (dispatch: Dispatch): Promise<void> => {
     if (ns && ns === "_all") {
       ns = undefined;
     }
@@ -90,7 +90,7 @@ export function deployChart(
   namespace: string,
   values?: string,
 ) {
-  return async (dispatch: Dispatch<IStoreState>, getState: () => IStoreState): Promise<boolean> => {
+  return async (dispatch: Dispatch, getState: () => IStoreState): Promise<boolean> => {
     try {
       const { config: { namespace: kubeappsNamespace } } = getState();
       await App.create(releaseName, namespace, kubeappsNamespace, chartVersion, values);
@@ -108,7 +108,7 @@ export function upgradeApp(
   namespace: string,
   values?: string,
 ) {
-  return async (dispatch: Dispatch<IStoreState>, getState: () => IStoreState): Promise<boolean> => {
+  return async (dispatch: Dispatch, getState: () => IStoreState): Promise<boolean> => {
     try {
       const { config: { namespace: kubeappsNamespace } } = getState();
       await App.upgrade(releaseName, namespace, kubeappsNamespace, chartVersion, values);

@@ -3,7 +3,7 @@ import { createAction, getReturnOfExpression } from "typesafe-actions";
 
 import Function from "../shared/Function";
 import KubelessConfig from "../shared/KubelessConfig";
-import { IFunction, IRuntime, IStoreState } from "../shared/types";
+import { IFunction, IRuntime } from "../shared/types";
 
 export const requestFunctions = createAction("REQUEST_FUNCTIONS");
 export const receiveFunctions = createAction("RECEIVE_FUNCTIONS", (functions: IFunction[]) => ({
@@ -43,7 +43,7 @@ const allActions = [
 export type FunctionsAction = typeof allActions[number];
 
 export function fetchFunctions(ns?: string) {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     if (ns && ns === "_all") {
       ns = undefined;
     }
@@ -58,7 +58,7 @@ export function fetchFunctions(ns?: string) {
 }
 
 export function getFunction(name: string, namespace: string) {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     dispatch(requestFunctions());
     try {
       const f = await Function.get(name, namespace);
@@ -70,7 +70,7 @@ export function getFunction(name: string, namespace: string) {
 }
 
 export function createFunction(name: string, namespace: string, spec: IFunction["spec"]) {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     try {
       await Function.create(name, namespace, spec);
       return true;
@@ -82,7 +82,7 @@ export function createFunction(name: string, namespace: string, spec: IFunction[
 }
 
 export function deleteFunction(name: string, namespace: string) {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     try {
       await Function.delete(name, namespace);
       return true;
@@ -94,7 +94,7 @@ export function deleteFunction(name: string, namespace: string) {
 }
 
 export function updateFunction(name: string, namespace: string, newFn: IFunction) {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     try {
       const f = await Function.update(name, namespace, newFn);
       dispatch(selectFunction(f));
@@ -105,7 +105,7 @@ export function updateFunction(name: string, namespace: string, newFn: IFunction
 }
 
 export function getPodName(fn: IFunction) {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     try {
       const name = await Function.getPodName(fn);
       if (name) {
@@ -118,7 +118,7 @@ export function getPodName(fn: IFunction) {
 }
 
 export function fetchRuntimes() {
-  return async (dispatch: Dispatch<IStoreState>) => {
+  return async (dispatch: Dispatch) => {
     dispatch(requestRuntimes());
     try {
       const runtimeList = await KubelessConfig.getRuntimes();
