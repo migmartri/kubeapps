@@ -2,6 +2,7 @@ import { Location } from "history";
 import * as React from "react";
 import { Lock } from "react-feather";
 import { Redirect } from "react-router";
+import LoaderSpinner from "../LoadingSpinner/LoadingSpinner";
 
 import "./LoginForm.css";
 
@@ -15,14 +16,29 @@ interface ILoginFormProps {
 
 interface ILoginFormState {
   token: string;
+  autoLoginChecked: boolean;
 }
 
 class LoginForm extends React.Component<ILoginFormProps, ILoginFormState> {
-  public state: ILoginFormState = { token: "" };
+  public state: ILoginFormState = { token: "", autoLoginChecked: false };
+  // Auto-login: Using OPTIONS since we do not need the content of the call but just the headers
+  // TODO: Replace by Axios
+  public componentDidMount() {
+    fetch("/", { method: "OPTIONS" }).then(response => {
+      const token = response.headers.get("x-auth-token-id");
+      if (token) {
+        this.props.authenticate(token);
+      }
+      this.setState({ autoLoginChecked: true });
+    });
+  }
   public render() {
     if (this.props.authenticated) {
       const { from } = this.props.location.state || { from: { pathname: "/" } };
       return <Redirect to={from} />;
+    }
+    if (!this.state.autoLoginChecked) {
+      return <LoaderSpinner />;
     }
     return (
       <section className="LoginForm">
